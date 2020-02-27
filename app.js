@@ -7,7 +7,12 @@ var uiController = (function () {
     inputValue: ".add__value",
     addBtn: ".add__btn",
     incomeList: ".income__list",
-    expenseList: ".expenses__list"
+    expenseList: ".expenses__list",
+    tusuvLabel: ".budget__value",
+    incomeLabel: ".budget__income--value",
+    expeseLabel: ".budget__expenses--value",
+    percentageLabel: ".budget__expenses--percentage",
+    containerDiv: ".container"
   };
 
   return {
@@ -34,8 +39,16 @@ var uiController = (function () {
       });
 
       fieldsArr[0].focus();
-      // fieldsArr[i].value = "";
+    },
 
+    tusviigUzuuleh: function (tusuv) {
+      document.querySelector(DOMstrings.tusuvLabel).textContent = tusuv.tusuv;
+      document.querySelector(DOMstrings.incomeLabel).textContent = tusuv.totalInc;
+      document.querySelector(DOMstrings.expeseLabel).textContent = tusuv.totalExp;
+      if (tusuv.huvi !== 0)
+        document.querySelector(DOMstrings.percentageLabel).textContent = tusuv.huvi + '%';
+      else
+        document.querySelector(DOMstrings.percentageLabel).textContent = tusuv.huvi;
     },
 
     addListItem: function (item, type) {
@@ -125,6 +138,19 @@ var financeController = (function () {
       }
     },
 
+    deleteItem: function (type, id) {
+      var ids = data.items[type].map(function (el) {
+        return el.id;
+      });
+
+      var index = ids.indexOf(id);
+
+      if (index !== -1) {
+        data.items[type].splice(index, 1);
+      }
+    },
+
+
     addItem: function (type, desc, val) {
       // console.log("type: " + type + ' Desc: ' + desc + ' val: ' + val);
       var item, id;
@@ -173,7 +199,7 @@ var appController = (function (uiController, fnController) {
       var tusuv = financeController.tusviigAvah();
 
       // 6. Төсвийн тооцоог дэлгэцэнд гаргана.
-      console.log(tusuv);
+      uiController.tusviigUzuuleh(tusuv);
     }
   }
 
@@ -181,20 +207,44 @@ var appController = (function (uiController, fnController) {
 
     var DOM = uiController.getDOMstrings();
 
-    document.querySelector('.add__btn').addEventListener('click', function () {
-      ctrlAddItem();
-    });
-
     document.addEventListener('keypress', function (event) {
       if (event.key === 13 || event.which === 13) {
         ctrlAddItem();
       }
     });
+
+    document.querySelector('.add__btn').addEventListener('click', function () {
+      ctrlAddItem();
+    });
+
+    document.querySelector(DOM.containerDiv).addEventListener('click', function (event) {
+      var id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+      if (id) {
+        var arr = id.split('-');
+        var type = arr[0];
+        var itemId = parseInt(arr[1]);
+
+        // 1. Санхүүгийн модулиас Type, id ашиглаад устгана.
+        financeController.deleteItem(type, itemId);
+        // 2. Дэлгэц дээрээс энэ элементийг устгана.
+
+        // 3. Үлдэгдэл тооцоог шинэчилж харуулна.
+
+
+      }
+    });
+
   };
 
   return {
     init: function () {
       console.log('Appliction started...');
+      uiController.tusviigUzuuleh({
+        tusuv: 0,
+        huvi: 0,
+        totalInc: 0,
+        totalExp: 0
+      });
       setupEventListners();
     }
   }
