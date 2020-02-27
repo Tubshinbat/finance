@@ -51,6 +51,12 @@ var uiController = (function () {
         document.querySelector(DOMstrings.percentageLabel).textContent = tusuv.huvi;
     },
 
+    deleteListItem: function (id) {
+      var el = document.getElementById(id);
+      el.parentNode.removeChild(el);
+    },
+
+
     addListItem: function (item, type) {
       // Орлого зарлагын элементийг агуулсан html-ийг бэлтгэнэ.
       var html, list;
@@ -227,7 +233,7 @@ var appController = (function (uiController, fnController) {
         // 1. Санхүүгийн модулиас Type, id ашиглаад устгана.
         financeController.deleteItem(type, itemId);
         // 2. Дэлгэц дээрээс энэ элементийг устгана.
-
+        uiController.deleteListItem(id);
         // 3. Үлдэгдэл тооцоог шинэчилж харуулна.
 
 
